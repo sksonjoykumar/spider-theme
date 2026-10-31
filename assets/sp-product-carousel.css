@@ -1,0 +1,4 @@
+ .sp-free-product-carousel{padding-block:var(--sp-section-pad-top,64px) var(--sp-section-pad-bottom,64px)}
+.sp-free-product-carousel .sp-free-section-heading>div{flex:1}
+.sp-free-product-carousel .sp-free-section-heading>.sp-button{flex:0 0 auto}
+@media(max-width:749px){.sp-free-product-carousel{padding-block:40px}}

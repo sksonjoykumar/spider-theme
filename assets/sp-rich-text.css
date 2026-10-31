@@ -1,0 +1,7 @@
+ .sp-free-rich-text{padding-block:64px}
+.sp-free-rich-text__inner{max-width:900px}
+.sp-free-rich-text__inner--center{text-align:center}
+.sp-free-rich-text__inner h2{margin:0 0 16px}
+.sp-free-rich-text__inner .rte{margin-bottom:20px}
+.sp-free-rich-text__inner--center .rte{max-width:760px;margin-inline:auto;margin-bottom:20px}
+@media(max-width:749px){.sp-free-rich-text{padding-block:40px}}

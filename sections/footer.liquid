@@ -1,0 +1,144 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-footer.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sp-footer.js' | asset_url }}" defer></script>
+<footer class="sp-free-footer" style="padding-top:{{ section.settings.padding_top }}px;padding-bottom:{{ section.settings.padding_bottom }}px" data-sp-free-footer data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="sp-container">
+    <div class="sp-free-footer__grid">
+      {% for block in section.blocks %}
+        <div class="sp-free-footer__column sp-free-footer__column--{{ block.type }}" {{ block.shopify_attributes }}>
+          {% case block.type %}
+            {% when 'brand' %}
+              <div class="sp-free-footer__brand">
+                <a href="{{ routes.root_url }}" class="sp-free-footer__brand-link">
+                  {% if block.settings.logo != blank %}
+                    {{ block.settings.logo | image_url: width: 360 | image_tag: widths: '120, 180, 240, 360', alt: shop.name, class: 'sp-free-footer__logo' }}
+                  {% elsif settings.sp_logo != blank %}
+                    {{ settings.sp_logo | image_url: width: 360 | image_tag: widths: '120, 180, 240, 360', alt: shop.name, class: 'sp-free-footer__logo' }}
+                  {% else %}
+                    <strong>{{ shop.name | escape }}</strong>
+                  {% endif %}
+                </a>
+                {% if block.settings.description != blank %}<div class="rte">{{ block.settings.description }}</div>{% endif %}
+              </div>
+            {% when 'menu' %}
+              <details class="sp-free-footer__accordion" open>
+                <summary><span>{{ block.settings.heading | escape }}</span>{% render 'icon', name: 'chevron' %}</summary>
+                {% if block.settings.menu != blank %}
+                  <ul role="list">
+                    {% for link in block.settings.menu.links %}
+                      <li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>
+                    {% endfor %}
+                  </ul>
+                {% endif %}
+              </details>
+            {% when 'newsletter' %}
+              <div class="sp-free-footer__newsletter">
+                <h2>{{ block.settings.heading | escape }}</h2>
+                {% if block.settings.description != blank %}<div class="rte">{{ block.settings.description }}</div>{% endif %}
+                {% assign footer_newsletter_id = 'FooterNewsletter-' | append: section.id | append: '-' | append: block.id %}
+                {% form 'customer', id: footer_newsletter_id, class: 'sp-free-footer__form' %}
+                  <input type="hidden" name="contact[tags]" value="newsletter">
+                  <label class="visually-hidden" for="FooterEmail-{{ section.id }}-{{ block.id }}">Email address</label>
+                  <input id="FooterEmail-{{ section.id }}-{{ block.id }}" type="email" name="contact[email]" value="{{ form.email }}" placeholder="{{ block.settings.placeholder | escape }}" autocorrect="off" autocapitalize="off" autocomplete="email" required>
+                  <button type="submit" class="sp-button sp-button--primary">{{ block.settings.button_label | escape }}</button>
+                  {% if form.posted_successfully? %}<p class="sp-free-footer__success" role="status">{{ block.settings.success_message | escape }}</p>{% endif %}
+                  {% if form.errors %}<div class="sp-free-footer__error" role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+                {% endform %}
+              </div>
+            {% when 'text' %}
+              <div class="sp-free-footer__text">
+                {% if block.settings.heading != blank %}<h2>{{ block.settings.heading | escape }}</h2>{% endif %}
+                <div class="rte">{{ block.settings.text }}</div>
+              </div>
+            {% when 'social' %}
+              <div class="sp-free-footer__social">
+                {% if block.settings.heading != blank %}<h2>{{ block.settings.heading | escape }}</h2>{% endif %}
+                {% render 'social-links' %}
+              </div>
+          {% endcase %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="sp-free-footer__bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name | escape }}. {{ section.settings.copyright_text | escape }}</p>
+      {% if section.settings.show_payment_icons and shop.enabled_payment_types != empty %}
+        <ul class="sp-free-footer__payments" role="list">
+          {% for type in shop.enabled_payment_types %}
+            <li>{{ type | payment_type_svg_tag }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </div>
+  </div>
+</footer>
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "section",
+  "class": "sp-free-footer-section",
+  "enabled_on": { "groups": ["footer"] },
+  "max_blocks": 6,
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "Brand",
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo" },
+        { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Tell your brand story and help customers discover what makes your store special.</p>" }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Explore" },
+        { "type": "link_list", "id": "menu", "label": "Menu" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Stay in the loop" },
+        { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Sign up for updates, new products and special offers.</p>" },
+        { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Email address" },
+        { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe" },
+        { "type": "text", "id": "success_message", "label": "Success message", "default": "Thanks for subscribing!" }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "Text",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "About us" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Share useful information about your store.</p>" }
+      ]
+    },
+    {
+      "type": "social",
+      "name": "Social links",
+      "settings": [
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Follow us" }
+      ]
+    }
+  ],
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "checkbox", "id": "show_payment_icons", "label": "Show payment icons", "default": true },
+    { "type": "text", "id": "copyright_text", "label": "Copyright text", "default": "All rights reserved." },
+    { "type": "range", "id": "padding_top", "label": "Top padding", "min": 24, "max": 100, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom padding", "min": 24, "max": 100, "step": 4, "unit": "px", "default": 32 }
+  ],
+  "presets": [
+    {
+      "name": "Footer",
+      "blocks": [
+        { "type": "brand" },
+        { "type": "menu" },
+        { "type": "menu", "settings": { "heading": "Customer care" } },
+        { "type": "newsletter" }
+      ]
+    }
+  ]
+}
+{% endschema %}

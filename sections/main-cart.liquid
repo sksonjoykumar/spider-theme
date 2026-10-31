@@ -1,0 +1,58 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-main-cart.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-main-cart" data-section-id="{{ section.id }}">
+  <div class="sp-container">
+    <h1>{{ section.settings.heading | escape }}</h1>
+    {% if cart == empty %}
+      <div class="sp-free-main-cart__empty">
+        <p>{{ section.settings.empty_message | escape }}</p>
+        <a class="sp-button sp-button--primary" href="{{ routes.all_products_collection_url }}">{{ section.settings.continue_label | escape }}</a>
+      </div>
+    {% else %}
+      {% form 'cart', cart, id: 'FreeCartForm' %}
+        <div class="sp-free-main-cart__layout">
+          <div class="sp-free-main-cart__items">
+            {% for item in cart.items %}
+              <article class="sp-free-main-cart__item">
+                {% if item.image %}<a href="{{ item.url }}">{{ item.image | image_url: width: 240 | image_tag: widths: '120, 180, 240', alt: item.image.alt | default: item.product.title }}</a>{% endif %}
+                <div class="sp-free-main-cart__info">
+                  <h2><a href="{{ item.url }}">{{ item.product.title | escape }}</a></h2>
+                  {% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}
+                  <p>{{ item.final_price | money }}</p>
+                  <label for="CartQuantity-{{ item.key }}">Quantity</label>
+                  <input id="CartQuantity-{{ item.key }}" type="number" name="updates[]" value="{{ item.quantity }}" min="0" step="1">
+                  <a href="{{ item.url_to_remove }}" class="sp-free-main-cart__remove">Remove</a>
+                </div>
+                <strong>{{ item.final_line_price | money }}</strong>
+              </article>
+            {% endfor %}
+            <label for="CartNote-{{ section.id }}">Order note</label>
+            <textarea id="CartNote-{{ section.id }}" name="note" rows="3">{{ cart.note | escape }}</textarea>
+            <button class="sp-button sp-button--secondary" type="submit" name="update">Update cart</button>
+          </div>
+          <aside class="sp-free-main-cart__summary">
+            <h2>Order summary</h2>
+            <p><span>Subtotal</span><strong>{{ cart.total_price | money }}</strong></p>
+            <p class="sp-free-main-cart__note">{{ section.settings.shipping_note | escape }}</p>
+            <button class="sp-button sp-button--primary" type="submit" name="checkout">{{ section.settings.checkout_label | escape }}</button>
+            <a href="{{ routes.all_products_collection_url }}">Continue shopping</a>
+          </aside>
+        </div>
+      {% endform %}
+    {% endif %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main cart",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your cart" },
+    { "type": "text", "id": "empty_message", "label": "Empty message", "default": "Your cart is currently empty." },
+    { "type": "text", "id": "continue_label", "label": "Continue shopping label", "default": "Continue shopping" },
+    { "type": "text", "id": "checkout_label", "label": "Checkout button label", "default": "Proceed to checkout" },
+    { "type": "text", "id": "shipping_note", "label": "Shipping note", "default": "Taxes and shipping are calculated at checkout." }
+  ]
+}
+{% endschema %}

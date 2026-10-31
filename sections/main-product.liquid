@@ -1,0 +1,95 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-main-product.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-main-product" data-section-id="{{ section.id }}" data-sp-product-page>
+  <div class="sp-container sp-free-main-product__layout">
+    <div class="sp-free-main-product__gallery">
+      {% assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media %}
+      <div class="sp-free-main-product__media-list" data-product-media-list>
+        {% for media in product.media %}
+          <div class="sp-free-main-product__media{% if media.id == featured_media.id %} is-active{% endif %}" data-product-media data-media-index="{{ forloop.index0 }}"{% unless media.id == featured_media.id or featured_media == blank and forloop.first %} hidden{% endunless %}>
+            {% case media.media_type %}
+              {% when 'video' %}
+                {{ media | media_tag: controls: true, preload: 'none' }}
+              {% when 'external_video' %}
+                {{ media | external_video_tag }}
+              {% else %}
+                {% if media.preview_image %}
+                  {{ media.preview_image | image_url: width: 1600 | image_tag: widths: '480, 720, 960, 1200, 1600', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'eager', alt: media.alt | default: product.title }}
+                {% endif %}
+            {% endcase %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if product.media.size > 1 %}
+        <div class="sp-free-main-product__thumbs" aria-label="Product media">
+          {% for media in product.media %}
+            <button type="button" data-product-thumb="{{ forloop.index0 }}" aria-label="Show image {{ forloop.index }}" aria-pressed="{% if media.id == featured_media.id or featured_media == blank and forloop.first %}true{% else %}false{% endif %}">
+              {{ media.preview_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', alt: media.alt | default: product.title }}
+            </button>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="sp-free-main-product__details">
+      {% if section.settings.show_vendor and product.vendor != blank %}<p class="sp-free-main-product__vendor">{{ product.vendor | escape }}</p>{% endif %}
+      <h1>{{ product.title | escape }}</h1>
+      <div class="sp-free-main-product__price" data-product-price-wrap>
+        {% assign current_variant = product.selected_or_first_available_variant %}
+        <span data-product-price>{{ current_variant.price | money }}</span>
+        <s data-product-compare{% unless current_variant.compare_at_price > current_variant.price %} hidden{% endunless %}>{% if current_variant.compare_at_price > current_variant.price %}{{ current_variant.compare_at_price | money }}{% endif %}</s>
+      </div>
+      {% if section.settings.show_sku and current_variant.sku != blank %}<p class="sp-free-main-product__sku" data-product-sku>SKU: {{ current_variant.sku | escape }}</p>{% endif %}
+      <p class="sp-free-main-product__availability" data-product-availability>{% if current_variant.available %}In stock{% else %}Sold out{% endif %}</p>
+      {% if product.description != blank and section.settings.show_description %}<div class="sp-free-main-product__description rte">{{ product.description }}</div>{% endif %}
+
+      {% assign product_form_id = 'FreeProductForm-' | append: section.id %}
+      {% form 'product', product, id: product_form_id, class: 'sp-free-product-form' %}
+        {% unless product.has_only_default_variant %}
+          <label for="FreeVariant-{{ section.id }}">Options</label>
+          <select id="FreeVariant-{{ section.id }}" name="id" data-product-variant>
+            {% for variant in product.variants %}
+              <option value="{{ variant.id }}" data-price="{{ variant.price }}" data-compare="{{ variant.compare_at_price | default: 0 }}" data-available="{{ variant.available }}" data-sku="{{ variant.sku | escape }}"{% if variant.id == current_variant.id %} selected{% endif %}{% unless variant.available %} disabled{% endunless %}>
+                {{ variant.title | escape }}{% unless variant.available %} — {{ 'products.product.sold_out' | t | default: 'Sold out' }}{% endunless %}
+              </option>
+            {% endfor %}
+          </select>
+        {% else %}
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant>
+        {% endunless %}
+
+        {% if section.settings.show_quantity %}
+          <label for="FreeQuantity-{{ section.id }}">Quantity</label>
+          <div class="sp-free-quantity" data-quantity>
+            <button type="button" data-quantity-minus aria-label="Decrease quantity">−</button>
+            <input id="FreeQuantity-{{ section.id }}" type="number" name="quantity" value="1" min="1" step="1" inputmode="numeric">
+            <button type="button" data-quantity-plus aria-label="Increase quantity">+</button>
+          </div>
+        {% else %}
+          <input type="hidden" name="quantity" value="1">
+        {% endif %}
+
+        <button type="submit" name="add" class="sp-button sp-button--primary sp-free-product-form__submit" data-product-submit{% unless current_variant.available %} disabled{% endunless %}>
+          {% if current_variant.available %}{{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}{% else %}{{ 'products.product.sold_out' | t | default: 'Sold out' }}{% endif %}
+        </button>
+        {% if section.settings.show_dynamic_checkout %}{{ form | payment_button }}{% endif %}
+        <p class="sp-free-product-form__error" data-product-error role="alert" hidden></p>
+      {% endform %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main product",
+  "tag": "section",
+  "class": "sp-section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "show_vendor", "label": "Show vendor", "default": false },
+    { "type": "checkbox", "id": "show_sku", "label": "Show SKU", "default": false },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "show_quantity", "label": "Show quantity selector", "default": true },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show dynamic checkout button", "default": false }
+  ]
+}
+{% endschema %}

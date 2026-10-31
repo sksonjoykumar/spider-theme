@@ -1,0 +1,71 @@
+{%- liquid
+  assign card_product = card_product | default: product
+  assign card_loading = loading | default: 'lazy'
+  assign card_sizes = sizes | default: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw'
+  assign featured_image = card_product.featured_media.preview_image | default: card_product.featured_image
+  assign second_image = blank
+  if settings.card_second_image and card_product.images.size > 1
+    assign second_image = card_product.images[1]
+  endif
+  assign first_variant = card_product.selected_or_first_available_variant
+-%}
+{% if card_product != blank %}
+{% assign card_ratio = '4 / 5' %}
+  {% case settings.card_image_ratio %}
+    {% when 'square' %}{% assign card_ratio = '1 / 1' %}
+    {% when 'landscape' %}{% assign card_ratio = '4 / 3' %}
+    {% when 'adapt' %}{% assign card_ratio = 'auto' %}
+  {% endcase %}
+<article class="sp-free-product-card{% unless card_product.available %} is-sold-out{% endunless %}" style="--sp-card-ratio:{{ card_ratio }};">
+  <div class="sp-free-product-card__media">
+    <a href="{{ card_product.url }}" aria-label="{{ card_product.title | escape }}">
+      {% if featured_image != blank %}
+        {{ featured_image | image_url: width: 900 | image_tag: widths: '240, 360, 480, 640, 760, 900', sizes: card_sizes, loading: card_loading, alt: featured_image.alt | default: card_product.title, class: 'sp-free-product-card__image' }}
+      {% else %}
+        {{ 'product-1' | placeholder_svg_tag: 'sp-free-product-card__placeholder' }}
+      {% endif %}
+      {% if second_image != blank %}
+        {{ second_image | image_url: width: 900 | image_tag: widths: '240, 360, 480, 640, 760, 900', sizes: card_sizes, loading: 'lazy', alt: second_image.alt | default: card_product.title, class: 'sp-free-product-card__image sp-free-product-card__image--secondary' }}
+      {% endif %}
+    </a>
+    {% if card_product.available == false %}
+      <span class="sp-free-product-card__badge sp-free-product-card__badge--sold">{{ 'products.product.sold_out' | t | default: 'Sold out' }}</span>
+    {% elsif card_product.compare_at_price_max > card_product.price %}
+      <span class="sp-free-product-card__badge">{{ 'products.product.on_sale' | t | default: 'Sale' }}</span>
+    {% endif %}
+  </div>
+  <div class="sp-free-product-card__content">
+    {% if settings.card_show_vendor %}<p class="sp-free-product-card__vendor">{{ card_product.vendor | escape }}</p>{% endif %}
+    <h3 class="sp-free-product-card__title"><a href="{{ card_product.url }}">{{ card_product.title | escape }}</a></h3>
+    <div class="sp-free-product-card__price">
+      {% if card_product.compare_at_price_max > card_product.price %}
+        <s>{{ card_product.compare_at_price_max | money }}</s>
+      {% endif %}
+      <span>{{ card_product.price | money }}</span>
+    </div>
+    {% if settings.card_show_swatches %}
+      {% for option in card_product.options_with_values %}
+        {% assign option_name = option.name | downcase %}
+        {% if option_name contains 'color' or option_name contains 'colour' %}
+          <div class="sp-free-product-card__swatches" aria-label="{{ option.name | escape }}">
+            {% for value in option.values limit: 5 %}
+              {% assign swatch_color = value.swatch.color | default: '#e5e7eb' %}
+              <span class="sp-free-product-card__swatch" title="{{ value | escape }}" style="--sp-swatch: {{ swatch_color }};"></span>
+            {% endfor %}
+          </div>
+          {% break %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+    {% if card_product.available and card_product.has_only_default_variant %}
+      <form method="post" action="{{ routes.cart_add_url }}" class="sp-free-product-card__form" data-sp-product-form>
+        <input type="hidden" name="id" value="{{ first_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="sp-button sp-button--secondary" data-product-submit>{{ 'products.product.add_to_cart' | t | default: 'Add to cart' }}</button>
+      </form>
+    {% else %}
+      <a class="sp-free-product-card__options" href="{{ card_product.url }}">{{ 'products.product.choose_options' | t | default: 'View options' }}</a>
+    {% endif %}
+  </div>
+</article>
+{% endif %}

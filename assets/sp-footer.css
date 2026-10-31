@@ -1,0 +1,23 @@
+ .sp-free-footer{background:var(--sp-section-bg,var(--sp-color-background));color:var(--sp-section-text,var(--sp-color-text));padding:56px 0 32px;border-top:1px solid var(--sp-section-border,var(--sp-color-border))}
+.sp-free-footer__grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:36px}
+.sp-free-footer__column h2,.sp-free-footer__accordion summary{font-size:16px;font-weight:700;color:var(--sp-section-heading,var(--sp-color-heading));margin:0 0 14px}
+.sp-free-footer__logo{max-width:180px;height:auto}
+.sp-free-footer__brand-link{display:inline-flex;margin-bottom:14px;color:inherit;text-decoration:none}
+.sp-free-footer__column ul{list-style:none;margin:0;padding:0}
+.sp-free-footer__column li+li{margin-top:10px}
+.sp-free-footer__column a{color:inherit;text-decoration:none}
+.sp-free-footer__column a:hover{text-decoration:underline;color:var(--sp-color-accent)}
+.sp-free-footer__accordion summary{display:flex;justify-content:space-between;align-items:center;list-style:none;cursor:pointer}
+.sp-free-footer__accordion summary::-webkit-details-marker{display:none}
+.sp-free-footer__accordion summary .sp-icon{width:16px;height:16px;transition:transform .2s}
+.sp-free-footer__accordion[open] summary .sp-icon{transform:rotate(180deg)}
+.sp-free-footer__form{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.sp-free-footer__form input{flex:1 1 180px;min-width:0}
+.sp-free-footer__form .sp-button{flex:0 0 auto}
+.sp-free-footer__bottom{display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid var(--sp-color-border);margin-top:40px;padding-top:22px;font-size:13px}
+.sp-free-footer__payments{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sp-free-footer__payments svg{width:38px;height:auto}
+.sp-free-footer__success{width:100%;color:var(--sp-color-success)}
+.sp-free-footer__error{width:100%;color:var(--sp-color-error)}
+@media(max-width:749px){.sp-free-footer{padding:36px 0 24px}.sp-free-footer__grid{grid-template-columns:1fr;gap:22px}.sp-free-footer__accordion summary{margin:0;padding:10px 0}.sp-free-footer__accordion ul{padding:4px 0 12px}.sp-free-footer__bottom{margin-top:28px;padding-top:18px;align-items:flex-start;flex-direction:column}.sp-free-footer__payments{gap:6px}}
+@media(min-width:750px){.sp-free-footer__accordion summary{cursor:default}.sp-free-footer__accordion summary .sp-icon{display:none}.sp-free-footer__accordion>ul{display:block!important}}

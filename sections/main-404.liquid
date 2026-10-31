@@ -1,0 +1,22 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-main-404.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-404" data-section-id="{{ section.id }}">
+  <div class="sp-container">
+    <p class="sp-free-eyebrow">404</p>
+    <h1>{{ section.settings.heading | escape }}</h1>
+    <p>{{ section.settings.description | escape }}</p>
+    <a class="sp-button sp-button--primary" href="{{ routes.root_url }}">{{ section.settings.button_label | escape }}</a>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main 404",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Page not found" },
+    { "type": "text", "id": "description", "label": "Description", "default": "The page you are looking for may have moved or no longer exists." },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Back to home" }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "hero": {
+      "type": "sp-hero-banner",
+      "settings": {}
+    },
+    "featured": {
+      "type": "featured-collection",
+      "settings": {}
+    },
+    "story": {
+      "type": "sp-story-with-image",
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "sp-newsletter",
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "featured",
+    "story",
+    "newsletter"
+  ]
+}

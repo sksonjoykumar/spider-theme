@@ -1,0 +1,40 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-newsletter.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-newsletter" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="sp-container sp-free-newsletter__inner">
+    <div>
+      {% if section.settings.eyebrow != blank %}<p class="sp-free-eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+      <h2>{{ section.settings.heading | escape }}</h2>
+      {% if section.settings.description != blank %}<div class="rte">{{ section.settings.description }}</div>{% endif %}
+    </div>
+    <div class="sp-free-newsletter__form-wrap">
+      {% assign newsletter_form_id = 'SpiderFreeNewsletter-' | append: section.id %}
+      {% form 'customer', id: newsletter_form_id, class: 'sp-free-newsletter__form' %}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        <label class="visually-hidden" for="SpiderFreeNewsletterEmail-{{ section.id }}">Email address</label>
+        <input id="SpiderFreeNewsletterEmail-{{ section.id }}" type="email" name="contact[email]" value="{{ form.email }}" placeholder="{{ section.settings.placeholder | escape }}" autocomplete="email" autocorrect="off" autocapitalize="off" required>
+        <button type="submit" class="sp-button sp-button--primary">{{ section.settings.button_label | escape }}</button>
+        {% if form.posted_successfully? %}<p role="status">{{ section.settings.success_message | escape }}</p>{% endif %}
+        {% if form.errors %}<div role="alert">{{ form.errors | default_errors }}</div>{% endif %}
+      {% endform %}
+      {% if section.settings.privacy_note != blank %}<p class="sp-free-newsletter__privacy">{{ section.settings.privacy_note | escape }}</p>{% endif %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Newsletter",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-2" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Stay connected" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Get updates from us" },
+    { "type": "richtext", "id": "description", "label": "Description", "default": "<p>Subscribe for new products, useful updates and exclusive offers.</p>" },
+    { "type": "text", "id": "placeholder", "label": "Email placeholder", "default": "Your email address" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "text", "id": "success_message", "label": "Success message", "default": "Thank you for subscribing." },
+    { "type": "text", "id": "privacy_note", "label": "Privacy note", "default": "You can unsubscribe at any time." }
+  ],
+  "presets": [{ "name": "Newsletter", "category": "Text" }]
+}
+{% endschema %}

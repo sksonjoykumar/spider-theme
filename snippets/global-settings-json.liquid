@@ -1,0 +1,8 @@
+<script type="application/json" id="SpiderGlobalSettings">
+{
+  "cartType": {{ settings.cart_type | default: 'drawer' | json }},
+  "cartAjaxUpdates": {{ settings.cart_ajax_updates | default: true | json }},
+  "cartOpenAfterAdd": {{ settings.cart_open_after_add | default: true | json }},
+  "lazyImages": {{ settings.perf_lazy_images | default: true | json }}
+}
+</script>

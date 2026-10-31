@@ -1,0 +1,60 @@
+{% unless request.page_type == 'cart' %}
+  {{ 'sp-cart-drawer.css' | asset_url | stylesheet_tag }}
+  <div class="sp-free-cart" data-sp-free-cart data-section-id="{{ section.id }}" hidden>
+    <button class="sp-free-cart__backdrop" type="button" data-cart-close aria-label="Close cart"></button>
+    <aside class="sp-free-cart__panel" role="dialog" aria-modal="true" aria-labelledby="SpFreeCartTitle-{{ section.id }}" tabindex="-1">
+      <header class="sp-free-cart__header">
+        <h2 id="SpFreeCartTitle-{{ section.id }}">{{ section.settings.heading | escape }} <span data-sp-cart-count-label>({{ cart.item_count }})</span></h2>
+        <button type="button" class="sp-free-cart__close" data-cart-close aria-label="Close cart">{% render 'icon', name: 'close' %}</button>
+      </header>
+      <div class="sp-free-cart__body" data-sp-cart-body>
+        {% if cart == empty %}
+          <div class="sp-free-cart__empty">
+            <p>{{ section.settings.empty_message | escape }}</p>
+            <a class="sp-button sp-button--primary" href="{{ routes.all_products_collection_url }}">{{ section.settings.continue_label | escape }}</a>
+          </div>
+        {% else %}
+          <ul class="sp-free-cart__items" role="list">
+            {% for item in cart.items %}
+              <li class="sp-free-cart__item" data-cart-line="{{ forloop.index }}">
+                {% if item.image %}<a href="{{ item.url }}">{{ item.image | image_url: width: 180 | image_tag: widths: '90, 120, 180', alt: item.image.alt | default: item.product.title }}</a>{% endif %}
+                <div class="sp-free-cart__item-info">
+                  <a href="{{ item.url }}" class="sp-free-cart__item-title">{{ item.product.title | escape }}</a>
+                  {% unless item.product.has_only_default_variant %}<p>{{ item.variant.title | escape }}</p>{% endunless %}
+                  <strong>{{ item.final_line_price | money }}</strong>
+                  <div class="sp-free-cart__quantity">
+                    <button type="button" data-cart-quantity data-line="{{ forloop.index }}" data-quantity="-1" aria-label="Decrease quantity">−</button>
+                    <span>{{ item.quantity }}</span>
+                    <button type="button" data-cart-quantity data-line="{{ forloop.index }}" data-quantity="1" aria-label="Increase quantity">+</button>
+                    <button type="button" data-cart-remove data-line="{{ forloop.index }}">Remove</button>
+                  </div>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+          <div class="sp-free-cart__summary">
+            <p><span>Subtotal</span><strong>{{ cart.total_price | money }}</strong></p>
+            <p class="sp-free-cart__note">{{ section.settings.shipping_note | escape }}</p>
+            <a class="sp-button sp-button--primary" href="{{ routes.checkout_url }}">Checkout</a>
+            <a class="sp-free-cart__view-cart" href="{{ routes.cart_url }}">View cart</a>
+          </div>
+        {% endif %}
+      </div>
+      <p class="sp-free-cart__live visually-hidden" role="status" aria-live="polite" data-sp-cart-live></p>
+    </aside>
+  </div>
+{% endunless %}
+{% schema %}
+{
+  "name": "Cart drawer",
+  "tag": "section",
+  "class": "sp-free-cart-section",
+  "enabled_on": { "groups": ["custom.system"] },
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your cart" },
+    { "type": "text", "id": "empty_message", "label": "Empty cart message", "default": "Your cart is currently empty." },
+    { "type": "text", "id": "continue_label", "label": "Continue shopping label", "default": "Continue shopping" },
+    { "type": "text", "id": "shipping_note", "label": "Shipping note", "default": "Taxes and shipping are calculated at checkout." }
+  ]
+}
+{% endschema %}

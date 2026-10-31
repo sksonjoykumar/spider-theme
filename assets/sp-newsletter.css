@@ -1,0 +1,6 @@
+ .sp-free-newsletter{padding-block:56px;background:var(--sp-section-bg,var(--sp-color-surface))}
+.sp-free-newsletter__inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.sp-free-newsletter__form{display:flex;gap:8px}
+.sp-free-newsletter__form input{flex:1;min-width:0}
+.sp-free-newsletter__privacy{font-size:12px;color:var(--sp-color-muted);margin-top:10px}
+@media(max-width:749px){.sp-free-newsletter{padding-block:40px}.sp-free-newsletter__inner{grid-template-columns:1fr;gap:20px}.sp-free-newsletter__form{flex-direction:column}.sp-free-newsletter__form .sp-button{width:100%}}

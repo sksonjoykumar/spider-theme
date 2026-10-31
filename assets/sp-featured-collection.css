@@ -1,0 +1,4 @@
+ .sp-free-featured-collection{padding-block:var(--sp-section-pad-top,64px) var(--sp-section-pad-bottom,64px)}
+.sp-free-featured-collection .sp-free-section-heading>div{flex:1}
+.sp-free-featured-collection .sp-free-section-heading>.sp-button{flex:0 0 auto}
+@media(max-width:749px){.sp-free-featured-collection{padding-block:40px}.sp-free-featured-collection .sp-free-section-heading>.sp-button{align-self:flex-start}}

@@ -1,0 +1,110 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-header.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sp-header.js' | asset_url }}" defer></script>
+<header class="sp-free-header{% if section.settings.sticky_header %} sp-free-header--sticky{% endif %}" data-sp-free-header data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="sp-free-header__inner sp-container" style="--sp-free-logo-width:{{ section.settings.logo_width }}px;--sp-header-pad:{{ section.settings.desktop_padding }}px;">
+    <button class="sp-free-header__menu-toggle" type="button" aria-expanded="false" aria-controls="SpFreeMobileNav-{{ section.id }}" data-mobile-menu-toggle>
+      <span class="visually-hidden">{{ 'sections.header.menu' | t | default: 'Open menu' }}</span>
+      {% render 'icon', name: 'menu' %}
+    </button>
+
+    <a class="sp-free-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name | escape }}">
+      {% if section.settings.logo != blank %}
+        {{ section.settings.logo | image_url: width: 500 | image_tag: widths: '120, 180, 240, 360, 500', sizes: '(max-width: 749px) 120px, 180px', alt: shop.name, class: 'sp-free-header__logo-image' }}
+      {% elsif settings.sp_logo != blank %}
+        {{ settings.sp_logo | image_url: width: 500 | image_tag: widths: '120, 180, 240, 360, 500', sizes: '(max-width: 749px) 120px, 180px', alt: shop.name, class: 'sp-free-header__logo-image' }}
+      {% else %}
+        <span class="sp-free-header__wordmark">{{ shop.name | escape }}</span>
+      {% endif %}
+    </a>
+
+    <nav class="sp-free-header__nav" aria-label="Main navigation">
+      {% if section.settings.menu != blank %}
+        <ul class="sp-free-header__links" role="list">
+          {% for link in section.settings.menu.links %}
+            <li class="sp-free-header__item{% if link.links != blank %} has-children{% endif %}">
+              {% if link.links != blank %}
+                <details class="sp-free-header__dropdown">
+                  <summary>{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                  <ul role="list">
+                    {% for child in link.links %}
+                      <li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </details>
+              {% else %}
+                <a href="{{ link.url }}"{% if link.current %} aria-current="page"{% endif %}>{{ link.title | escape }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
+
+    <div class="sp-free-header__actions">
+      {% if section.settings.show_search %}
+        <a class="sp-free-header__action" href="{{ routes.search_url }}" aria-label="{{ 'general.search.search' | t | default: 'Search' }}">
+          {% render 'icon', name: 'search' %}
+        </a>
+      {% endif %}
+      {% if section.settings.show_account and shop.customer_accounts_enabled %}
+        <a class="sp-free-header__action" href="{{ routes.account_url }}" aria-label="{{ 'customer.account.title' | t | default: 'Account' }}">
+          {% render 'icon', name: 'account' %}
+        </a>
+      {% endif %}
+      {% if section.settings.show_cart %}
+        <a class="sp-free-header__action sp-free-header__cart" href="{{ routes.cart_url }}" aria-label="{{ 'templates.cart.cart' | t | default: 'Cart' }}"{% if settings.cart_type == 'drawer' %} data-sp-cart-open{% endif %}>
+          {% render 'icon', name: 'cart' %}
+          <span class="sp-free-header__cart-count" data-sp-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="sp-free-header__mobile-nav" id="SpFreeMobileNav-{{ section.id }}" data-mobile-menu hidden>
+    <nav aria-label="Mobile navigation">
+      {% if section.settings.menu != blank %}
+        <ul role="list">
+          {% for link in section.settings.menu.links %}
+            <li>
+              {% if link.links != blank %}
+                <details>
+                  <summary>{{ link.title | escape }} {% render 'icon', name: 'chevron' %}</summary>
+                  <ul role="list">
+                    {% for child in link.links %}
+                      <li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>
+                    {% endfor %}
+                  </ul>
+                </details>
+              {% else %}
+                <a href="{{ link.url }}">{{ link.title | escape }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "tag": "section",
+  "class": "sp-free-header-section",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "range", "id": "logo_width", "label": "Logo width", "min": 80, "max": 280, "step": 10, "unit": "px", "default": 150 },
+    { "type": "link_list", "id": "menu", "label": "Main menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "sticky_header", "label": "Enable sticky header", "default": true },
+    { "type": "checkbox", "id": "show_search", "label": "Show search", "default": true },
+    { "type": "checkbox", "id": "show_account", "label": "Show account", "default": true },
+    { "type": "checkbox", "id": "show_cart", "label": "Show cart", "default": true },
+    { "type": "range", "id": "desktop_padding", "label": "Desktop vertical padding", "min": 8, "max": 36, "step": 2, "unit": "px", "default": 16 },
+    { "type": "range", "id": "mobile_padding", "label": "Mobile vertical padding", "min": 6, "max": 24, "step": 2, "unit": "px", "default": 12 }
+  ],
+  "presets": [{ "name": "Header" }]
+}
+{% endschema %}

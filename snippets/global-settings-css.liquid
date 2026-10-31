@@ -1,0 +1,106 @@
+{% assign heading_font = settings.sp_heading_font %}
+{% assign body_font = settings.sp_body_font %}
+<style>
+{% if heading_font != blank %}{{ heading_font | font_face: font_display: 'swap' }}{% endif %}
+{% if body_font != blank %}{{ body_font | font_face: font_display: 'swap' }}{% endif %}
+:root {
+  --sp-color-primary: {{ settings.sp_primary | default: '#171717' }};
+  --sp-color-secondary: {{ settings.sp_secondary | default: '#3F3F46' }};
+  --sp-color-accent: {{ settings.sp_accent | default: '#415DFF' }};
+  --sp-color-heading: {{ settings.sp_heading | default: '#171717' }};
+  --sp-color-text: {{ settings.sp_text | default: '#3F3F46' }};
+  --sp-color-muted: {{ settings.sp_muted | default: '#71717A' }};
+  --sp-color-background: {{ settings.sp_background | default: '#FFFFFF' }};
+  --sp-color-surface: {{ settings.sp_surface | default: '#F5F5F5' }};
+  --sp-color-card: {{ settings.sp_card_bg | default: '#FFFFFF' }};
+  --sp-color-border: {{ settings.sp_border | default: '#E4E4E7' }};
+  --sp-color-divider: {{ settings.sp_divider | default: '#EFEFF1' }};
+  --sp-color-sale: {{ settings.sp_sale | default: '#DC2626' }};
+  --sp-color-success: {{ settings.sp_success | default: '#16A34A' }};
+  --sp-color-error: {{ settings.sp_error | default: '#B91C1C' }};
+  --sp-heading-font: {% if heading_font != blank %}{{ heading_font.family | json }}, {{ heading_font.fallback_families }}{% else %}Arial, sans-serif{% endif %};
+  --sp-body-font: {% if body_font != blank %}{{ body_font.family | json }}, {{ body_font.fallback_families }}{% else %}Arial, sans-serif{% endif %};
+  --sp-button-font: var(--sp-body-font);
+  --sp-heading-style: normal;
+  --sp-body-style: normal;
+  --sp-body-size-d: {{ settings.body_size_d | default: 16 }}px;
+  --sp-body-size-m: {{ settings.body_size_m | default: 16 }}px;
+  --sp-body-weight: {{ settings.body_weight | default: 400 }};
+  --sp-body-line: {{ settings.body_line_height | default: 1.6 }};
+  --sp-h1-size-d: {{ settings.h1_size_d | default: 56 }}px;
+  --sp-h1-size-t: {{ settings.h1_size_t | default: 44 }}px;
+  --sp-h1-size-m: {{ settings.h1_size_m | default: 36 }}px;
+  --sp-h1-weight: {{ settings.h1_weight | default: 700 }};
+  --sp-h1-line: {{ settings.h1_line_height | default: 1.1 }};
+  --sp-h1-tracking: {{ settings.h1_tracking | default: 0 }}px;
+  --sp-h1-transform: {{ settings.h1_transform | default: 'none' }};
+  --sp-h2-size-d: {{ settings.h2_size_d | default: 40 }}px;
+  --sp-h2-size-t: {{ settings.h2_size_t | default: 34 }}px;
+  --sp-h2-size-m: {{ settings.h2_size_m | default: 28 }}px;
+  --sp-h2-weight: {{ settings.h2_weight | default: 700 }};
+  --sp-h2-line: {{ settings.h2_line_height | default: 1.2 }};
+  --sp-h2-tracking: {{ settings.h2_tracking | default: 0 }}px;
+  --sp-h2-transform: {{ settings.h2_transform | default: 'none' }};
+  --sp-h3-size-d: {{ settings.h3_size_d | default: 24 }}px;
+  --sp-h3-size-t: {{ settings.h3_size_t | default: 22 }}px;
+  --sp-h3-size-m: {{ settings.h3_size_m | default: 20 }}px;
+  --sp-h3-weight: {{ settings.h3_weight | default: 600 }};
+  --sp-h3-line: {{ settings.h3_line_height | default: 1.25 }};
+  --sp-h3-tracking: {{ settings.h3_tracking | default: 0 }}px;
+  --sp-h3-transform: {{ settings.h3_transform | default: 'none' }};
+  --sp-button-size: {{ settings.sp_button_size | default: 15 }}px;
+  --sp-button-weight: {{ settings.sp_button_weight | default: 600 }};
+  --sp-button-radius: {{ settings.sp_button_radius | default: 8 }}px;
+  --sp-button-pad-x: {{ settings.sp_button_pad_x | default: 24 }}px;
+  --sp-button-pad-y: {{ settings.sp_button_pad_y | default: 14 }}px;
+  --sp-button-border-width: {{ settings.sp_button_border_w | default: 1 }}px;
+  --sp-button-tracking: {{ settings.sp_button_tracking | default: 0 }}px;
+  --sp-button-transform: {{ settings.sp_button_transform | default: 'none' }};
+  --sp-btn-primary-bg: {{ settings.btn_primary_bg | default: '#171717' }};
+  --sp-btn-primary-text: {{ settings.btn_primary_text | default: '#FFFFFF' }};
+  --sp-btn-primary-border: {{ settings.btn_primary_border | default: '#171717' }};
+  --sp-btn-primary-hover-bg: {{ settings.btn_primary_hover_bg | default: '#2C2C2C' }};
+  --sp-btn-primary-hover-text: {{ settings.btn_primary_hover_text | default: '#FFFFFF' }};
+  --sp-btn-secondary-bg: {{ settings.btn_second_bg | default: '#FFFFFF' }};
+  --sp-btn-secondary-text: {{ settings.btn_second_text | default: '#171717' }};
+  --sp-btn-secondary-border: {{ settings.btn_second_border | default: '#171717' }};
+  --sp-btn-secondary-hover-bg: {{ settings.btn_second_hover_bg | default: '#171717' }};
+  --sp-btn-secondary-hover-text: {{ settings.btn_second_hover_text | default: '#FFFFFF' }};
+  --sp-page-width: {{ settings.sp_container_width | default: 1280 }}px;
+  --sp-page-gutter-d: {{ settings.sp_page_gutter_d | default: 32 }}px;
+  --sp-page-gutter-m: {{ settings.sp_page_gutter_m | default: 20 }}px;
+  --sp-section-space-d: {{ settings.sp_section_gap | default: 72 }}px;
+  --sp-section-space-t: 56px;
+  --sp-section-space-m: 44px;
+  --sp-section-pad-top: {{ settings.sp_section_gap | default: 72 }}px;
+  --sp-section-pad-bottom: {{ settings.sp_section_gap | default: 72 }}px;
+  --sp-section-pad-mobile: 44px;
+  --sp-grid-gap: {{ settings.sp_grid_gap | default: 24 }}px;
+  --sp-product-grid-gap: {{ settings.product_grid_gap | default: 20 }}px;
+  --sp-content-gap: 24px;
+  --sp-mobile-grid-gap: 12px;
+  --sp-radius-sm: 4px;
+  --sp-radius-md: {{ settings.sp_radius_medium | default: 8 }}px;
+  --sp-radius-lg: {{ settings.sp_radius_large | default: 16 }}px;
+  --sp-touch-target: {{ settings.a11y_touch_target | default: 44 }}px;
+  --sp-focus-color: {{ settings.a11y_focus_color | default: '#415DFF' }};
+  --sp-focus-width: 2px;
+  --sp-focus-offset: 2px;
+  --sp-form-height: 52px;
+  --sp-form-height-mobile: 48px;
+  --sp-form-radius: 8px;
+  --sp-form-border: #D6D9DF;
+  --sp-form-hover-border: #999FA9;
+  --sp-form-focus: var(--sp-color-accent);
+  --sp-form-ring-width: 3px;
+  --sp-form-ring-opacity: .13;
+  --sp-form-transition: 200ms;
+  --sp-form-textarea-height: 120px;
+  --sp-motion-duration: 225ms;
+}
+.sp-container { width: min(calc(100% - (var(--sp-page-gutter-d) * 2)), var(--sp-page-width)); margin-inline: auto; }
+@media (max-width: 749px) {
+  :root { --sp-page-gutter: var(--sp-page-gutter-m); }
+  .sp-container { width: calc(100% - (var(--sp-page-gutter-m) * 2)); }
+}
+</style>

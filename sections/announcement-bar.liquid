@@ -1,0 +1,21 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-announcement-bar.css' | asset_url | stylesheet_tag }}
+<div class="sp-free-announcement" role="region" aria-label="Announcement" {{ section.shopify_attributes }}>
+  {% if section.settings.link != blank %}<a href="{{ section.settings.link }}" class="sp-free-announcement__link">{% endif %}
+    <p>{{ section.settings.message | escape }}</p>
+  {% if section.settings.link != blank %}</a>{% endif %}
+</div>
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": "section",
+  "class": "sp-free-announcement-section",
+  "enabled_on": { "groups": ["header"] },
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-3" },
+    { "type": "text", "id": "message", "label": "Announcement", "default": "Free shipping on qualifying orders" },
+    { "type": "url", "id": "link", "label": "Link" }
+  ],
+  "presets": [{ "name": "Announcement bar" }]
+}
+{% endschema %}

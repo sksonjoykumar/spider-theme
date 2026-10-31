@@ -1,0 +1,33 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-product-recommendations.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'sp-product-recommendations.js' | asset_url }}" defer></script>
+{% if product != blank %}
+  <product-recommendations class="sp-free-recommendations" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related" data-section-id="{{ section.id }}">
+    {% if recommendations.performed? and recommendations.products_count > 0 %}
+      <div class="sp-container">
+        <h2>{{ section.settings.heading | escape }}</h2>
+        <div class="sp-free-product-grid" style="--sp-free-cols:{{ section.settings.columns_desktop }};--sp-free-cols-mobile:{{ section.settings.columns_mobile }};">
+          {% for card_product in recommendations.products %}
+            {% render 'product-card', card_product: card_product %}
+          {% endfor %}
+        </div>
+      </div>
+    {% elsif request.design_mode %}
+      <div class="sp-container"><h2>{{ section.settings.heading | escape }}</h2><p class="sp-free-empty">Related products will appear here when Shopify returns recommendations.</p></div>
+    {% endif %}
+  </product-recommendations>
+{% endif %}
+{% schema %}
+{
+  "name": "Product recommendations",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "Mobile columns", "default": "2", "options": [{ "value": "1", "label": "1" }, { "value": "2", "label": "2" }] }
+  ],
+  "presets": [{ "name": "Product recommendations", "category": "Products" }]
+}
+{% endschema %}

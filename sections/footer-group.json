@@ -1,0 +1,51 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "brand": {
+          "type": "brand",
+          "settings": {
+            "description": "<p>Thoughtfully selected products, made for everyday life.</p>"
+          }
+        },
+        "shop_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "Shop",
+            "menu": "main-menu"
+          }
+        },
+        "support_menu": {
+          "type": "menu",
+          "settings": {
+            "heading": "Support",
+            "menu": "footer"
+          }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": {
+            "heading": "Stay in the loop",
+            "description": "<p>Get updates about new products and special offers.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "brand",
+        "shop_menu",
+        "support_menu",
+        "newsletter"
+      ],
+      "settings": {
+        "show_payment_icons": true,
+        "copyright_text": "All rights reserved."
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

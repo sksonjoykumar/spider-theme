@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-contact",
+      "settings": {
+        "heading": "Contact us",
+        "intro_text": "Have a question? Send us a message and our team will get back to you."
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

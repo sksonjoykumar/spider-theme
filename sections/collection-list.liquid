@@ -1,0 +1,74 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-content-sections.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-collection-list" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="sp-container">
+    {% if section.settings.heading != blank or section.settings.description != blank %}
+      <header class="sp-free-section-heading">
+        <div>
+          {% if section.settings.eyebrow != blank %}<p class="sp-free-eyebrow">{{ section.settings.eyebrow | escape }}</p>{% endif %}
+          {% if section.settings.heading != blank %}<h2>{{ section.settings.heading | escape }}</h2>{% endif %}
+          {% if section.settings.description != blank %}<div class="rte">{{ section.settings.description }}</div>{% endif %}
+        </div>
+      </header>
+    {% endif %}
+    <div class="sp-free-collection-list__grid" style="--sp-free-collection-cols:{{ section.settings.columns_desktop }};">
+      {% for block in section.blocks %}
+        {% assign selected_collection = block.settings.collection %}
+        {% assign item_image = block.settings.image | default: selected_collection.image %}
+        {% if item_image == blank and selected_collection.products.first.featured_media %}
+          {% assign item_image = selected_collection.products.first.featured_media.preview_image %}
+        {% endif %}
+        {% assign item_title = block.settings.title | default: selected_collection.title | default: 'Collection' %}
+        {% assign item_url = block.settings.link | default: selected_collection.url %}
+        <article class="sp-free-collection-card" {{ block.shopify_attributes }}>
+          <a href="{{ item_url | default: routes.all_products_collection_url }}" class="sp-free-collection-card__link">
+            <div class="sp-free-collection-card__media">
+              {% if item_image != blank %}
+                {{ item_image | image_url: width: 900 | image_tag: widths: '240, 360, 480, 640, 760, 900', sizes: '(min-width: 990px) 25vw, (min-width: 750px) 33vw, 50vw', loading: 'lazy', alt: item_image.alt | default: item_title }}
+              {% else %}
+                {{ 'collection-1' | placeholder_svg_tag }}
+              {% endif %}
+            </div>
+            <div class="sp-free-collection-card__content">
+              <h3>{{ item_title | escape }}</h3>
+              {% if section.settings.show_count and selected_collection != blank %}<span>{{ selected_collection.all_products_count }} products</span>{% endif %}
+            </div>
+          </a>
+        </article>
+      {% endfor %}
+      {% if section.blocks.size == 0 and request.design_mode %}
+        <p class="sp-free-empty">Add collection blocks to build your collection list.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Collection list",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by collection" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 2, "max": 6, "step": 1, "default": 4 },
+    { "type": "checkbox", "id": "show_count", "label": "Show product count", "default": false }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image override" },
+        { "type": "text", "id": "title", "label": "Title override" },
+        { "type": "url", "id": "link", "label": "Link override" }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    { "name": "Collection list", "category": "Collections", "blocks": [{ "type": "collection" }, { "type": "collection" }, { "type": "collection" }, { "type": "collection" }] }
+  ]
+}
+{% endschema %}

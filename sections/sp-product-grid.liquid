@@ -1,0 +1,31 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-product-grid.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-product-section" data-section-id="{{ section.id }}" {{ section.shopify_attributes }}>
+  <div class="sp-container">
+    {% if section.settings.heading != blank %}<div class="sp-free-section-heading"><h2>{{ section.settings.heading | escape }}</h2>{% if section.settings.description != blank %}<div class="rte">{{ section.settings.description }}</div>{% endif %}</div>{% endif %}
+    {% if section.settings.products != blank %}
+      <div class="sp-free-product-grid" style="--sp-free-cols:{{ section.settings.columns_desktop }};--sp-free-cols-mobile:{{ section.settings.columns_mobile }};">
+        {% for card_product in section.settings.products %}
+          {% render 'product-card', card_product: card_product %}
+        {% endfor %}
+      </div>
+    {% elsif request.design_mode %}
+      <p class="sp-free-empty">Select products in the section settings.</p>
+    {% endif %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Product grid",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Selected products" },
+    { "type": "richtext", "id": "description", "label": "Description" },
+    { "type": "product_list", "id": "products", "label": "Products", "limit": 16 },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "Mobile columns", "default": "2", "options": [{ "value": "1", "label": "1" }, { "value": "2", "label": "2" }] }
+  ],
+  "presets": [{ "name": "Product grid", "category": "Products" }]
+}
+{% endschema %}

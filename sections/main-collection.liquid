@@ -1,0 +1,91 @@
+{% render 'sp-section-color-scheme', section: section %}
+{{ 'sp-main-collection.css' | asset_url | stylesheet_tag }}
+<section class="sp-free-main-collection" data-section-id="{{ section.id }}">
+  <div class="sp-container">
+    <header class="sp-free-collection-header">
+      {% if section.settings.show_image and collection.image != blank %}
+        {{ collection.image | image_url: width: 1800 | image_tag: widths: '640, 900, 1200, 1600, 1800', sizes: '100vw', loading: 'eager', alt: collection.image.alt | default: collection.title }}
+      {% endif %}
+      <h1>{{ collection.title | escape }}</h1>
+      {% if section.settings.show_description and collection.description != blank %}<div class="rte">{{ collection.description }}</div>{% endif %}
+      {% if section.settings.show_count %}<p>{{ collection.products_count }} products</p>{% endif %}
+    </header>
+
+    <div class="sp-free-collection-toolbar">
+      {% if section.settings.show_filters and collection.filters.size > 0 %}
+        <details class="sp-free-filters">
+          <summary>Filter products</summary>
+          <form method="get" class="sp-free-filters__form">
+            {% for filter in collection.filters %}
+              <fieldset>
+                <legend>{{ filter.label | escape }}</legend>
+                {% if filter.type == 'price_range' %}
+                  <div class="sp-free-filters__price">
+                    <label>From <input name="{{ filter.min_value.param_name }}" type="number" min="0" placeholder="0" value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"></label>
+                    <label>To <input name="{{ filter.max_value.param_name }}" type="number" min="0" placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}" value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"></label>
+                  </div>
+                {% else %}
+                  {% for filter_value in filter.values %}
+                    <label class="sp-free-filter-value">
+                      <input type="checkbox" name="{{ filter_value.param_name }}" value="{{ filter_value.value }}" {% if filter_value.active %}checked{% endif %} {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}>
+                      <span>{{ filter_value.label | escape }} ({{ filter_value.count }})</span>
+                    </label>
+                  {% endfor %}
+                {% endif %}
+              </fieldset>
+            {% endfor %}
+            <button type="submit" class="sp-button sp-button--secondary">Apply filters</button>
+            <a href="{{ collection.url }}">Clear all</a>
+          </form>
+        </details>
+      {% endif %}
+      {% if section.settings.show_sort %}
+        <form method="get" class="sp-free-sort">
+          {% for filter in collection.filters %}
+            {% for filter_value in filter.active_values %}
+              <input type="hidden" name="{{ filter_value.param_name }}" value="{{ filter_value.value }}">
+            {% endfor %}
+          {% endfor %}
+          <label for="CollectionSort-{{ section.id }}">Sort by</label>
+          <select id="CollectionSort-{{ section.id }}" name="sort_by" onchange="this.form.submit()">
+            {% for option in collection.sort_options %}
+              <option value="{{ option.value | escape }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name | escape }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      {% endif %}
+    </div>
+
+    {% paginate collection.products by section.settings.products_per_page %}
+      <div class="sp-free-product-grid" style="--sp-free-cols:{{ section.settings.columns_desktop }};--sp-free-cols-mobile:{{ section.settings.columns_mobile }};">
+        {% for card_product in collection.products %}
+          {% render 'product-card', card_product: card_product %}
+        {% else %}
+          <p>No products found.</p>
+        {% endfor %}
+      </div>
+      {% if paginate.pages > 1 %}
+        <nav class="sp-free-pagination" role="navigation" aria-label="Pagination">
+          {{ paginate | default_pagination }}
+        </nav>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Main collection",
+  "tag": "section",
+  "settings": [
+    { "type": "color_scheme", "id": "sp_color_scheme", "label": "Color scheme", "default": "scheme-1" },
+    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": false },
+    { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
+    { "type": "checkbox", "id": "show_count", "label": "Show product count", "default": true },
+    { "type": "checkbox", "id": "show_filters", "label": "Enable filters", "default": true },
+    { "type": "checkbox", "id": "show_sort", "label": "Enable sorting", "default": true },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "range", "id": "columns_desktop", "label": "Desktop columns", "min": 2, "max": 5, "step": 1, "default": 4 },
+    { "type": "select", "id": "columns_mobile", "label": "Mobile columns", "default": "2", "options": [{ "value": "1", "label": "1" }, { "value": "2", "label": "2" }] }
+  ]
+}
+{% endschema %}
